@@ -205,7 +205,7 @@ static struct attribute_group kernel_attr_group = {
 };
 
 
-static unsigned int Lgentle_fair_sleepers = 1;
+static unsigned int Lgentle_fair_sleepers = 0;
 extern void relay_gfs(unsigned int gfs);
 
 static ssize_t gentle_fair_sleepers_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
