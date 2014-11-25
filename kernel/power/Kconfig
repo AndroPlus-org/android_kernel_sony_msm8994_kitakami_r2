@@ -307,3 +307,8 @@ config WAKEUP_IRQ_DEBUG
 	---help---
 	  This enables debug information about wakeup interrupts using
 	  sysfs (/sys/kernel/).
+
+config PM_SYNC_BEFORE_SUSPEND
+	bool "Sync file systems before suspend"
+	depends on PM
+	default y
