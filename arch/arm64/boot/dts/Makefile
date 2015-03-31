@@ -4,7 +4,9 @@ dtb-$(CONFIG_ARCH_XGENE) += apm-mustang.dtb
 targets += dtbs
 
 #used for cleaning - not building
-subdir- := qcom
+#Not working due to symlink in arch/arm64/boot/dts
+#subdir- := qcom
+
 
 dtbs: $(addprefix $(obj)/, $(DTB_LIST))
 
