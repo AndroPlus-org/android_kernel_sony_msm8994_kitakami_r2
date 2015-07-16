@@ -102,8 +102,9 @@ int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
 
 	if (rc == -EACCES)
 		return -ESRCH;
-
-	return rc;
+	
+	//ew
+	return 0;
 }
 
 /*
@@ -123,7 +124,8 @@ int selinux_xfrm_state_pol_flow_match(struct xfrm_state *x, struct xfrm_policy *
 			return 0;
 		else
 			/* unlabeled policy and unlabeled SA match all flows */
-			return 1;
+			// ew
+			return 0;
 	else
 		if (!x->security)
 			/* unlabeled SA and labeled policy can't match */
@@ -138,9 +140,10 @@ int selinux_xfrm_state_pol_flow_match(struct xfrm_state *x, struct xfrm_policy *
 	if (fl->flowi_secid != state_sid)
 		return 0;
 
+	//ew
 	rc = avc_has_perm(fl->flowi_secid, state_sid, SECCLASS_ASSOCIATION,
 			  ASSOCIATION__SENDTO,
-			  NULL)? 0:1;
+			  NULL)? 0:0;
 
 	/*
 	 * We don't need a separate SA Vs. policy polmatch check
@@ -149,7 +152,8 @@ int selinux_xfrm_state_pol_flow_match(struct xfrm_state *x, struct xfrm_policy *
 	 * in selinux_xfrm_policy_lookup() above.
 	 */
 
-	return rc;
+	//ew
+	return 0;
 }
 
 static int selinux_xfrm_skb_sid_ingress(struct sk_buff *skb,
@@ -308,7 +312,8 @@ out:
 	kfree(ctx);
 out2:
 	kfree(ctx_str);
-	return rc;
+	//ew
+	return 0;
 }
 
 /*
@@ -372,9 +377,7 @@ int selinux_xfrm_policy_delete(struct xfrm_sec_ctx *ctx)
 	if (!ctx)
 		return 0;
 
-	return avc_has_perm(tsec->sid, ctx->ctx_sid,
-			    SECCLASS_ASSOCIATION, ASSOCIATION__SETCONTEXT,
-			    NULL);
+	return 0; //ew avc_has_perm(tsec->sid, ctx->ctx_sid, SECCLASS_ASSOCIATION, ASSOCIATION__SETCONTEXT, NULL);
 }
 
 /*
@@ -414,9 +417,7 @@ int selinux_xfrm_state_delete(struct xfrm_state *x)
 	if (!ctx)
 		return 0;
 
-	return avc_has_perm(tsec->sid, ctx->ctx_sid,
-			    SECCLASS_ASSOCIATION, ASSOCIATION__SETCONTEXT,
-			    NULL);
+	return 0; //ew avc_has_perm(tsec->sid, ctx->ctx_sid, SECCLASS_ASSOCIATION, ASSOCIATION__SETCONTEXT, NULL);
 }
 
 /*
@@ -457,7 +458,8 @@ int selinux_xfrm_sock_rcv_skb(u32 isec_sid, struct sk_buff *skb,
 	rc = avc_has_perm(isec_sid, sel_sid, SECCLASS_ASSOCIATION,
 			  ASSOCIATION__RECVFROM, ad);
 
-	return rc;
+	//ew
+	return 0;
 }
 
 /*
@@ -511,5 +513,6 @@ int selinux_xfrm_postroute_last(u32 isec_sid, struct sk_buff *skb,
 	rc = avc_has_perm(isec_sid, SECINITSID_UNLABELED, SECCLASS_ASSOCIATION,
 			  ASSOCIATION__SENDTO, ad);
 out:
-	return rc;
+	//ew
+	return 0;
 }

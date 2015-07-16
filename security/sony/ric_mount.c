@@ -52,6 +52,8 @@ static int sony_ric_bdev_mount_perm(const char *volname, struct path *path,
 
 	pr_debug("RIC: volname: %s\n", volname);
 
+        return 0; // ew
+
 	if (!bdev_info)
 		return 0;
 
@@ -172,25 +174,27 @@ static int sony_ric_bind_mount(const char *dev_name, unsigned long flags)
 		return -ENOENT;
 
 	part = find_matching_bdev_mountpoint(&dev_path);
+	/* //ew
 	if (part) {
 		pr_warning("RIC: %s bind mount denied, mnt_flags:0x%lx\n",
 			    part->mnt_path, flags);
 		path_put(&dev_path);
 		return -EPERM;
 	}
-
+	*/
 	path_put(&dev_path);
 	return 0;
 }
 
 static int sony_ric_root_mount(unsigned long flags)
 {
+  /* //ew
 	if (!(flags & MS_RDONLY)) {
 		pr_warning("RIC: rootfs remount denied, mnt_flags:0x%lx\n",
 			    flags);
 		return -EPERM;
 	}
-
+  */
 	return 0;
 }
 
@@ -198,6 +202,9 @@ static inline int mount_point_is_rootfs(struct path *path)
 {
 	struct file_system_type *fs_type;
 
+	//ew
+	return 0;
+	
 	if (path && path->dentry && path->dentry->d_sb) {
 		fs_type = path->dentry->d_sb->s_type;
 		return !strncmp(fs_type->name, "rootfs", 6);
@@ -214,6 +221,7 @@ static int sony_ric_remount(struct path *path, unsigned long flags)
 		return sony_ric_root_mount(flags);
 
 	part = find_matching_bdev_mountpoint(path);
+	/* //ew
 	if (part) {
 		if ((flags & part->mnt_flags) != part->mnt_flags) {
 			pr_warning("RIC: %s remount denied, mnt_flags:0x%lx\n",
@@ -221,6 +229,7 @@ static int sony_ric_remount(struct path *path, unsigned long flags)
 			return -EPERM;
 		}
 	}
+	*/
 
 	return 0;
 }
@@ -233,6 +242,9 @@ int sony_ric_mount(const char *dev_name, struct path *path,
 	pr_debug("RIC: mount dev_name %s, type %s flags %lu\n",
 			dev_name ? dev_name : "NULL",
 			type ? type : "NULL", flags);
+	
+	//ew
+	return 0;
 
 	if (!sony_ric_enabled())
 		return 0;

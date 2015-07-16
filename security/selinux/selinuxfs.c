@@ -95,8 +95,7 @@ static int task_has_security(struct task_struct *tsk,
 	if (tsec)
 		sid = tsec->sid;
 	rcu_read_unlock();
-	if (!tsec)
-		return -EACCES;
+	//ew if (!tsec) return -EACCES;
 
 	return avc_has_perm(sid, SECINITSID_SECURITY,
 			    SECCLASS_SECURITY, perms, NULL);
@@ -259,8 +258,12 @@ static int sel_mmap_handle_status(struct file *filp,
 	if (vma->vm_pgoff > 0 || size != PAGE_SIZE)
 		return -EIO;
 	/* disallow writable mapping */
+	
+	/* // ew
 	if (vma->vm_flags & VM_WRITE)
 		return -EPERM;
+	*/
+	
 	/* disallow mprotect() turns it into writable */
 	vma->vm_flags &= ~VM_MAYWRITE;
 
@@ -489,8 +492,7 @@ static int sel_mmap_policy(struct file *filp, struct vm_area_struct *vma)
 		/* do not allow mprotect to make mapping writable */
 		vma->vm_flags &= ~VM_MAYWRITE;
 
-		if (vma->vm_flags & VM_WRITE)
-			return -EACCES;
+		//ew if (vma->vm_flags & VM_WRITE) return -EACCES;
 	}
 
 	vma->vm_flags |= VM_DONTEXPAND | VM_DONTDUMP;
