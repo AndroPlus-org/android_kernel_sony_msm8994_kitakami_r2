@@ -53,9 +53,12 @@
 
 #include <asm/uaccess.h>
 
+
 #ifdef CONFIG_RAMDUMP_TAGS
 #include <linux/rdtags.h>
 #endif
+
+#include "printk_interface.h"
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/printk.h>
@@ -1957,6 +1960,10 @@ EXPORT_SYMBOL(vprintk_emit);
 
 asmlinkage int vprintk(const char *fmt, va_list args)
 {
+	// if printk mode is disabled, terminate instantly
+	if (printk_mode == 0)
+			return 0;
+
 	return vprintk_emit(0, -1, NULL, 0, fmt, args);
 }
 EXPORT_SYMBOL(vprintk);
@@ -2001,6 +2008,10 @@ asmlinkage int printk(const char *fmt, ...)
 {
 	va_list args;
 	int r;
+
+	// if printk mode is disabled, terminate instantly
+	if (printk_mode == 0)
+		return 0;
 
 #ifdef CONFIG_KGDB_KDB
 	if (unlikely(kdb_trap_printk)) {
