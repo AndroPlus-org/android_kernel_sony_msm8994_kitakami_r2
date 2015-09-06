@@ -191,9 +191,14 @@ static unsigned int _adjust_pwrlevel(struct kgsl_pwrctrl *pwr, int level,
 					struct kgsl_pwr_constraint *pwrc,
 					int popp)
 {
-	unsigned int max_pwrlevel = max_t(unsigned int, pwr->thermal_pwrlevel,
+	unsigned int therm_pwrlevel, max_pwrlevel, min_pwrlevel;
+
+	if (pwr->thermal_pwrlevel > 0)
+		therm_pwrlevel = pwr->thermal_pwrlevel - 1;
+
+	max_pwrlevel = max_t(unsigned int, therm_pwrlevel,
 		pwr->max_pwrlevel);
-	unsigned int min_pwrlevel = max_t(unsigned int, pwr->thermal_pwrlevel,
+	min_pwrlevel = max_t(unsigned int, therm_pwrlevel,
 		pwr->min_pwrlevel);
 
 	switch (pwrc->type) {
