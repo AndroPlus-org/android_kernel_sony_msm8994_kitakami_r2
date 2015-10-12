@@ -189,7 +189,7 @@ struct cs_dbs_tuners {
 	unsigned int down_threshold;
 	unsigned int freq_step;
 	unsigned int input_boost_freq;
-	u64 input_boost_duration;
+	unsigned int input_boost_duration;
 };
 
 struct ex_dbs_tuners {
