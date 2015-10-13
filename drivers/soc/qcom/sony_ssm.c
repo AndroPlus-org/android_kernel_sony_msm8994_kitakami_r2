@@ -219,11 +219,11 @@ static ssize_t ssm_store_set_late_resume_notifications(struct device *pdev,
 }
 
 static struct device_attribute ssm_attrs[] = {
-	__ATTR(enable, 0600, NULL,
+	__ATTR(enable, 0200, NULL,
 			ssm_store_enable),
-	__ATTR(set_request_next_suspend_prepare_notification, 0600, NULL,
+	__ATTR(set_request_next_suspend_prepare_notification, 0200, NULL,
 			ssm_store_request_next_suspend_prepare_notification),
-	__ATTR(set_late_resume_notifications, 0600, NULL,
+	__ATTR(set_late_resume_notifications, 0200, NULL,
 			ssm_store_set_late_resume_notifications),
 };
 
