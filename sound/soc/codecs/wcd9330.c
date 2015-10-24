@@ -44,6 +44,7 @@
 #include "wcd9xxx-common.h"
 #include "wcdcal-hwdep.h"
 #include "wcd_cpe_core.h"
+#include "tomtom_control.h"
 
 enum {
 	VI_SENSE_1,
@@ -5512,7 +5513,7 @@ static int tomtom_volatile(struct snd_soc_codec *ssc, unsigned int reg)
 	return 0;
 }
 
-static int tomtom_write(struct snd_soc_codec *codec, unsigned int reg,
+int tomtom_write(struct snd_soc_codec *codec, unsigned int reg,
 	unsigned int value)
 {
 	int ret;
@@ -5537,7 +5538,9 @@ static int tomtom_write(struct snd_soc_codec *codec, unsigned int reg,
 	} else
 		return wcd9xxx_reg_write(&wcd9xxx->core_res, reg, value);
 }
-static unsigned int tomtom_read(struct snd_soc_codec *codec,
+EXPORT_SYMBOL(tomtom_write);
+
+unsigned int tomtom_read(struct snd_soc_codec *codec,
 				unsigned int reg)
 {
 	unsigned int val;
@@ -5569,6 +5572,7 @@ static unsigned int tomtom_read(struct snd_soc_codec *codec,
 		return val;
 	}
 }
+EXPORT_SYMBOL(tomtom_read);
 
 static int tomtom_startup(struct snd_pcm_substream *substream,
 		struct snd_soc_dai *dai)
@@ -9116,6 +9120,9 @@ static int tomtom_codec_probe(struct snd_soc_codec *codec)
 		/* Do not fail probe if CPE failed */
 		ret = 0;
 	}
+
+	tomtom_control_probe(codec);
+
 	return ret;
 
 err_pdata:
