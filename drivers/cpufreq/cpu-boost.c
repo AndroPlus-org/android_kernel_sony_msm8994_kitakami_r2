@@ -80,9 +80,6 @@ module_param(sched_boost_on_input, bool, 0644);
 
 static bool sched_boost_active;
 
-static bool hotplug_boost = 1;
-module_param(hotplug_boost, bool, 0644);
-
 #ifdef CONFIG_STATE_NOTIFIER
 bool wakeup_cb_boost;
 module_param_named(wakeup_boost, wakeup_cb_boost, bool, 0644);
@@ -530,7 +527,7 @@ static int cpuboost_cpu_callback(struct notifier_block *cpu_nb,
 	case CPU_UP_CANCELED:
 		break;
 	case CPU_ONLINE:
-		if (suspended || !hotplug_boost || !input_boost_enabled ||
+		if (suspended || !input_boost_enabled ||
 		     work_pending(&input_boost_work))
 			break;
 		pr_debug("Hotplug boost for CPU%lu\n", (long)hcpu);
