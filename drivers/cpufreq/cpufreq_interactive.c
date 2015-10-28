@@ -492,7 +492,12 @@ static void cpufreq_interactive_timer(unsigned long data)
 
 	spin_lock_irqsave(&ppol->target_freq_lock, flags);
 	cpu_load = loadadjfreq / ppol->policy->cur;
-	tunables->boosted = tunables->boost_val || now < tunables->boostpulse_endtime;
+#ifdef CONFIG_CPU_BOOST
+	tunables->boosted = check_cpuboost(data) || tunables->boost_val ||
+#else
+	tunables->boosted = tunables->boost_val ||
+#endif
+	now < tunables->boostpulse_endtime;
 
 	if (cpu_load >= tunables->go_hispeed_load || tunables->boosted) {
 		if (ppol->policy->cur < tunables->hispeed_freq &&
