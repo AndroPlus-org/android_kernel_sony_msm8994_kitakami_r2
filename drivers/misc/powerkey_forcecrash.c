@@ -7,6 +7,7 @@
  */
 /*
  * Copyright (C) 2014 Sony Mobile Communications Inc.
+ * Copyright (C) 2015 Tom G. <roboter972@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2, as
@@ -29,7 +30,7 @@ static struct timer_list forcecrash_timer;
 static struct wake_lock powerkey_lock;
 
 static int forcecrash_on;
-module_param(forcecrash_on, int, S_IRUGO | S_IWUSR);
+module_param(forcecrash_on, int, S_IRUGO);
 
 static void forcecrash_timeout(unsigned long data)
 {
@@ -38,9 +39,6 @@ static void forcecrash_timeout(unsigned long data)
 
 static void forcecrash_timer_setup(bool key_pressed)
 {
-	if (!forcecrash_on)
-		return;
-
 	if (key_pressed) {
 		pr_debug("Power key pressed..\n");
 		mod_timer(&forcecrash_timer,
@@ -58,8 +56,9 @@ static void powerkey_input_event(struct input_handle *handle, unsigned int type,
 {
 	switch (code) {
 	case KEY_POWER:
-		forcecrash_timer_setup(value);
-		break;
+		if (forcecrash_on)
+			forcecrash_timer_setup(value);
+		/* Fall through */
 	default:
 		break;
 	}
@@ -150,6 +149,7 @@ static int __init powerkey_forcecrash_init(void)
 	forcecrash_timer.function = forcecrash_timeout;
 	wake_lock_init(&powerkey_lock, WAKE_LOCK_SUSPEND,
 			PKEY_FORCECRASH_DEV_NAME);
+	forcecrash_on = 1;
 	return input_register_handler(&powerkey_input_handler);
 }
 
