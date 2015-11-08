@@ -1,0 +1,49 @@
+### GCC 4.9.x
+
+if [ ! -e ./arch/arm/boot/dts/msm8994-v1-kitakami_suzuran_generic.dtb ]; then
+rm ./arch/arm/boot/dts/*.dtb
+fi
+
+export ARCH=arm64
+export PATH=~/UBERTC-aarch64-linux-android-4.9-kernel-4e03aaa93230/bin/:$PATH
+export CROSS_COMPILE=aarch64-linux-android-
+export KBUILD_DIFFCONFIG=suzuran_diffconfig
+make kitakami_defconfig
+make
+
+echo "checking for compiled kernel..."
+if [ -f arch/arm64/boot/Image ]
+then
+
+echo "generating device tree..."
+make dtbs
+../final_files/dtbToolCM --force-v2 -o ../final_files/dt.img -s 2048 -p ./scripts/dtc/ ./arch/arm/boot/dts/
+
+### copy zImage
+#cp arch/arm64/boot/Image ../final_files/. 
+
+echo "DONE"
+
+fi
+
+### E5823
+../final_files/mkbootimg --cmdline "androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 boot_cpus=0-5 dwc3_msm.prop_chg_detect=Y coherent_pool=2M dwc3_msm.hvdcp_max_current=1500 androidboot.selinux=permissive" --base 0x00000000 --kernel arch/arm64/boot/Image --ramdisk ../final_files/ramdiskE5823.cpio.gz --ramdisk_offset 0x02000000 --pagesize 4096 -o ../final_files/boot_E5823.img --dt ../final_files/dt.img --tags_offset 0x01E00000
+
+
+if [ -e ../final_files/boot_E5823.img ]
+then
+
+### Zip boot.img
+cd ../final_files/
+mv boot_E5823.img boot.img
+zip Z5C_AndroPlusKernel_v.zip boot.img
+rm -f boot.img
+
+### Version number
+echo -n "Enter version number: "
+read version
+
+### Copy zip to my desktop
+dd if=Z5C_AndroPlusKernel_v.zip of="/mnt/hgfs/VMShare/デスクトップ/Z5C_AndroPlusKernel_v$version.zip"
+
+fi
