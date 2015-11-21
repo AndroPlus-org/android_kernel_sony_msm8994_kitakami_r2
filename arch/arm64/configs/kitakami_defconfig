@@ -596,6 +596,12 @@ CONFIG_CRYPTO_AES_ARM64_NEON_BLK=y
 CONFIG_QMI_ENCDEC=y
 CONFIG_STRICT_MEMORY_RWX=y
 
+##########################
+#### AndroPlus Kernel ####
+##########################
+
+CONFIG_LOCALVERSION="-v4"
+
 # Disable unwanted things
 CONFIG_SECURITY_SONY_RIC=n
 # CONFIG_DM_VERITY is not set
