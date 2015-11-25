@@ -1680,6 +1680,11 @@ static int find_color_area(struct mdp_pcc_cfg_data *pcc_config,
 	pcc_config->r.r = pcc_data->color_tbl[i].r_data;
 	pcc_config->g.g = pcc_data->color_tbl[i].g_data;
 	pcc_config->b.b = pcc_data->color_tbl[i].b_data;
+
+	pr_info("%s: i = %d, r = %u, g = %u, b = %u\n", __func__, i,
+							pcc_config->r.r,
+							pcc_config->g.g,
+							pcc_config->b.b);
 exit:
 	return ret;
 }
