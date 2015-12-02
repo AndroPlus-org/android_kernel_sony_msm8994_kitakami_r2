@@ -3027,30 +3027,30 @@
 		qcom,mdss-dsi-display-timings {
 			1080p {
 				qcom,mdss-dsi-timing-default;
-				qcom,mdss-dsi-panel-width = <1080>;
-				qcom,mdss-dsi-panel-height = <3840>;
+				qcom,mdss-dsi-panel-width = <540>;
+				qcom,mdss-dsi-panel-height = <1920>;
 				qcom,mdss-dsi-h-back-porch = <8>;
 				qcom,mdss-dsi-h-pulse-width = <8>;
-				qcom,mdss-dsi-h-front-porch = <172>;
+				qcom,mdss-dsi-h-front-porch = <20>;
 				qcom,mdss-dsi-v-back-porch = <8>;
 				qcom,mdss-dsi-v-pulse-width = <8>;
-				qcom,mdss-dsi-v-front-porch = <691>;
+				qcom,mdss-dsi-v-front-porch = <2390>;
 				qcom,mdss-dsi-panel-framerate = <60>;
-				qcom,mdss-dsi-panel-timings = [E6 38 26 00 68 66 32 3C 2C 03 04 00];
+				qcom,mdss-dsi-panel-timings = [E6 38 26 00 68 66 32 3C 14 03 04 00];
 				qcom,mdss-dsi-t-clk-post = <0x02>;
-				qcom,mdss-dsi-t-clk-pre = <0x2B>;
+				qcom,mdss-dsi-t-clk-pre = <0x28>;
 				somc,mdss-dsi-init-command = [39 01 00 00 00 00 05 FF AA 55 A5 80
 				15 01 00 00 00 00 02 6F 01
 				15 01 00 00 00 00 02 F3 10
 				39 01 00 00 00 00 05 FF AA 55 A5 00
-				15 01 00 00 00 00 02 58 00
-				15 01 00 00 00 00 02 90 02
+				15 01 00 00 00 00 02 58 01
+				15 01 00 00 00 00 02 90 00
 				39 01 00 00 00 00 06 F0 55 AA 52 08 00
 				15 01 00 00 00 00 02 B4 01
 				39 01 00 00 00 00 0B B9 02 00 B8 01 D0 00 00 D0 00 00
+				15 01 00 00 00 00 02 C9 01
 				39 01 00 00 00 00 10 BD 00 AA 12 24 00 01 56 00 00 01 00 00 00 00 D7
 				39 01 00 00 00 00 0C BE 00 AA 12 24 00 01 56 00 00 01 00
-				15 01 00 00 00 00 02 C9 01
 				39 01 00 00 00 00 06 C0 02 00 00 0E 00
 				39 01 00 00 00 00 06 F0 55 AA 52 08 03
 				39 01 00 00 00 00 05 B0 0A 0A 0A 0A
@@ -3067,32 +3067,11 @@
 
 				qcom,mdss-dsi-timing-switch-command = [
 					39 00 00 00 00 00 06 F0 55 AA 52 08 00
-					15 00 00 00 00 00 02 58 00
-					15 00 00 00 00 00 02 90 02
+					15 00 00 00 00 00 02 58 01
+					15 00 00 00 00 00 02 90 00
 					15 01 00 00 00 00 02 C9 01
 					];
-				qcom,mdss-dsi-timing-switch-command-state =
-					"dsi_lp_mode";
-
-				qcom,mdss-dsi-fbc-enable;
-				qcom,mdss-dsi-fbc-ver2-mode;
-				qcom,mdss-dsi-fbc-bpp = <8>;
-				qcom,mdss-dsi-fbc-packing = <1>;
-				qcom,mdss-dsi-fbc-2d-pred-mode;
-				qcom,mdss-dsi-fbc-slice-height = <4>;
-				qcom,mdss-dsi-fbc-quant-error;
-				qcom,mdss-dsi-fbc-bias = <2>;
-				qcom,mdss-dsi-fbc-vlc-mode;
-				qcom,mdss-dsi-fbc-bflc-mode;
-				qcom,mdss-dsi-fbc-lossy-mode-idx = <3>;
-				qcom,mdss-dsi-fbc-pat-mode;
-				qcom,mdss-dsi-fbc-budget-ctrl = <5>;
-				qcom,mdss-dsi-fbc-block-budget = <59>;
-				qcom,mdss-dsi-fbc-h-line-budget = <675>;
-				qcom,mdss-dsi-fbc-lossless-threshold = <0x200>;
-				qcom,mdss-dsi-fbc-lossy-threshold = <192>;
-				qcom,mdss-dsi-fbc-rgb-threshold = <4>;
-				qcom,mdss-dsi-fbc-max-pred-err = <3>;
+				qcom,mdss-dsi-timing-switch-command-state = "dsi_lp_mode";
 
 				qcom,mdss-tear-check-sync-init-val = <3840>;
 				qcom,mdss-tear-check-start-pos = <3840>;
@@ -3232,38 +3211,18 @@
 		qcom,mdss-dsi-display-timings {
 			1080p {
 				qcom,mdss-dsi-timing-default;
-				qcom,mdss-dsi-panel-width = <1080>;
-				qcom,mdss-dsi-panel-height = <3840>;
+				qcom,mdss-dsi-panel-width = <540>;
+				qcom,mdss-dsi-panel-height = <1920>;
 				qcom,mdss-dsi-h-back-porch = <8>;
 				qcom,mdss-dsi-h-pulse-width = <8>;
-				qcom,mdss-dsi-h-front-porch = <172>;
+				qcom,mdss-dsi-h-front-porch = <20>;
 				qcom,mdss-dsi-v-back-porch = <8>;
 				qcom,mdss-dsi-v-pulse-width = <8>;
-				qcom,mdss-dsi-v-front-porch = <691>;
+				qcom,mdss-dsi-v-front-porch = <2390>;
 				qcom,mdss-dsi-panel-framerate = <60>;
-				qcom,mdss-dsi-panel-timings = [E6 38 26 00 68 66 32 3C 2C 03 04 00];
+				qcom,mdss-dsi-panel-timings = [E6 38 26 00 68 66 32 3C 14 03 04 00];
 				qcom,mdss-dsi-t-clk-post = <0x02>;
-				qcom,mdss-dsi-t-clk-pre = <0x2B>;
-
-				qcom,mdss-dsi-fbc-enable;
-				qcom,mdss-dsi-fbc-ver2-mode;
-				qcom,mdss-dsi-fbc-bpp = <8>;
-				qcom,mdss-dsi-fbc-packing = <1>;
-				qcom,mdss-dsi-fbc-2d-pred-mode;
-				qcom,mdss-dsi-fbc-slice-height = <4>;
-				qcom,mdss-dsi-fbc-quant-error;
-				qcom,mdss-dsi-fbc-bias = <2>;
-				qcom,mdss-dsi-fbc-vlc-mode;
-				qcom,mdss-dsi-fbc-bflc-mode;
-				qcom,mdss-dsi-fbc-lossy-mode-idx = <3>;
-				qcom,mdss-dsi-fbc-pat-mode;
-				qcom,mdss-dsi-fbc-budget-ctrl = <5>;
-				qcom,mdss-dsi-fbc-block-budget = <59>;
-				qcom,mdss-dsi-fbc-h-line-budget = <675>;
-				qcom,mdss-dsi-fbc-lossless-threshold = <0x200>;
-				qcom,mdss-dsi-fbc-lossy-threshold = <192>;
-				qcom,mdss-dsi-fbc-rgb-threshold = <4>;
-				qcom,mdss-dsi-fbc-max-pred-err = <3>;
+				qcom,mdss-dsi-t-clk-pre = <0x28>;
 
 				qcom,mdss-tear-check-sync-init-val = <3840>;
 				qcom,mdss-tear-check-start-pos = <3840>;
