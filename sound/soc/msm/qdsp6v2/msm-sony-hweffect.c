@@ -337,7 +337,7 @@ int msm_sony_hweffect_sonybundle_handler(struct audio_client *ac,
 
 		case XLOUD_ENABLE:
 			if (length != 1 || index_offset != 0) {
-				pr_err("XLOUD_ENABLE:invalid params\n");
+				pr_debug("XLOUD_ENABLE:invalid params\n");
 				rc = -EINVAL;
 				goto invalid_config;
 			}
@@ -361,7 +361,7 @@ int msm_sony_hweffect_sonybundle_handler(struct audio_client *ac,
 					pr_debug("%s:sony_hweffect_send_tuning_params(XLOUD) ret=%d\n",
 						__func__, ret);
 					if (ret < 0) {
-						pr_err("XLOUD_ENABLE: send tuning param error\n");
+						pr_debug("XLOUD_ENABLE: send tuning param error\n");
 						rc = -EINVAL;
 						goto invalid_config;
 					}

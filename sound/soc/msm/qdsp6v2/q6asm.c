@@ -453,7 +453,7 @@ int sony_hweffect_send_tuning_params(unsigned int effect_id, void *client)
 		break;
 
 	case XLOUD_PARAM:
-		tuning_param_s = sony_hweffect_params_getparam(XLOUD_PARAM);
+		/*tuning_param_s = sony_hweffect_params_getparam(XLOUD_PARAM);
 		if (tuning_param_s == NULL) {
 			pr_err("%s: xloud param is NULL\n", __func__);
 			rc = -EINVAL;
@@ -465,8 +465,8 @@ int sony_hweffect_send_tuning_params(unsigned int effect_id, void *client)
 		param_length = sizeof(struct xloud_tuning_params);
 		memcpy(tuning_param_d, tuning_param_s, param_length);
 		pr_debug("%s: XLOUD_PARAM\n module_id=%u, param_id=%u, param_length=%u",
-			__func__, module_id, param_id, param_length);
-		break;
+			__func__, module_id, param_id, param_length);*/
+		/* Fall through */
 
 	default:
 		pr_err("%s: Invalid effect id(%u)\n", __func__, effect_id);
