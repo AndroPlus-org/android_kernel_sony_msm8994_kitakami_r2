@@ -1643,7 +1643,7 @@ static void boost_kick_cpus(void)
 			 * has something running in order to check for
 			 * migration afterwards, otherwise skip it.
 			 */
-			if (nr_running)
+			if (nr_running > 0)
 				boost_kick(i);
 		}
 	}
