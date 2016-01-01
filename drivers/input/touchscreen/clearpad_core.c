@@ -4348,7 +4348,7 @@ static int clearpad_pm_resume(struct device *dev)
 		rc = clearpad_process_irq(this);
 	}
 
-	return 0;
+	return rc;
 }
 
 static int clearpad_pm_suspend_noirq(struct device *dev)
