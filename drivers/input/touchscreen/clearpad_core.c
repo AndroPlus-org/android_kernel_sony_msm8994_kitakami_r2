@@ -4264,10 +4264,8 @@ static void clearpad_input_ev_init(struct clearpad_t *this)
 static void clearpad_suspend(struct device *dev)
 {
 	struct clearpad_t *this = dev_get_drvdata(dev);
-	bool go_suspend;
 
-	go_suspend = (this->task != SYN_TASK_NO_SUSPEND);
-	if (go_suspend)
+	if (likely(this->task != SYN_TASK_NO_SUSPEND))
 		this->active |= SYN_STANDBY;
 	else
 		this->active |= SYN_STANDBY_AFTER_TASK;
@@ -4279,11 +4277,8 @@ static void clearpad_suspend(struct device *dev)
 static void clearpad_resume(struct device *dev)
 {
 	struct clearpad_t *this = dev_get_drvdata(dev);
-	bool go_resume;
 
-	go_resume = !!(this->active & (SYN_STANDBY | SYN_STANDBY_AFTER_TASK));
-	if (go_resume)
-		this->active &= ~(SYN_STANDBY | SYN_STANDBY_AFTER_TASK);
+	this->active &= ~(SYN_STANDBY | SYN_STANDBY_AFTER_TASK);
 
 	LOG_STAT(this, "active: %x (task: %s)\n",
 		 this->active, clearpad_task_name[this->task]);
