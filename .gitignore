@@ -108,6 +108,7 @@ arch/arm64/boot/Image
 arch/arm/boot/compressed/vmlinux
 arch/arm/boot/zImage
 
+Image
 
 arch/arm/boot/Image
 arch/arm/boot/compressed/ashldi3.S
