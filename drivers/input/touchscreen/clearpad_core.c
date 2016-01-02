@@ -3191,8 +3191,6 @@ static int clearpad_process_irq(struct clearpad_t *this)
 		goto unlock;
 	}
 
-	rc = 0;
-
 	dev_dbg(&this->pdev->dev, "no work, interrupt=[0x%02x]\n", interrupt);
 unlock:
 	if (rc) {
