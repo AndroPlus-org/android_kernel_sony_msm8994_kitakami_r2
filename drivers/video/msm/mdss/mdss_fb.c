@@ -1379,18 +1379,18 @@ static void mdss_fb_scale_bl(struct msm_fb_data_type *mfd, u32 *bl_lvl)
 /* Backlight is faded off when backlight sets "0". */
 #define FADEOUT_LOOP_CNT 3
 #define FADEOUT_DIVISION 10
-#define FADEOUT_WAIT_TIME 17
+#define FADEOUT_WAIT_TIME 17000 /* in us */
+
 static void mdss_fb_fade_out_bl(struct mdss_panel_data *pdata, u32 bl_before)
 {
-	int cnt;
-	u32 bl_diff;
+	int cnt = 0;
+	u32 bl_diff = bl_before / FADEOUT_DIVISION;
 
-	bl_diff = bl_before / FADEOUT_DIVISION;
-	for (cnt = 0; cnt < FADEOUT_LOOP_CNT; cnt++) {
-		if (bl_before > bl_diff) {
-			bl_before = bl_before - bl_diff;
+	while (cnt++ < FADEOUT_LOOP_CNT) {
+		if (bl_before> bl_diff) {
+			bl_before -= bl_diff;
 			pdata->set_backlight(pdata, bl_before);
-			msleep(FADEOUT_WAIT_TIME);
+			usleep_range(FADEOUT_WAIT_TIME, FADEOUT_WAIT_TIME + 1000);
 		} else {
 			break;
 		}
