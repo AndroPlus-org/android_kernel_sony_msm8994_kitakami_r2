@@ -1,4 +1,5 @@
 ### GCC 4.9.x
+### I'm using UBERTC https://bitbucket.org/UBERTC/arm-eabi-4.9
 
 if [ ! -e ./arch/arm/boot/dts/msm8994-v1-kitakami_sumire_generic.dtb ]; then
 rm ./arch/arm/boot/dts/*.dtb
@@ -6,7 +7,9 @@ fi
 
 export ARCH=arm64
 export PATH=~/aarch64-linux-android-4.9-kernel/bin/:$PATH
+### See prefix of file names in the toolchain's bin directory
 export CROSS_COMPILE=aarch64-linux-android-
+
 export KBUILD_DIFFCONFIG=sumire_diffconfig
 make kitakami_defconfig
 make
