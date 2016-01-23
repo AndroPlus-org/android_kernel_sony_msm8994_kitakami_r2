@@ -1869,19 +1869,13 @@ static int init_events_group(void)
 
 static int __init msm_performance_init(void)
 {
-	enum { CLUSTER_0_FREQ_CAP = 1344000, CLUSTER_1_FREQ_CAP = 1536000 };
 	unsigned int cpu;
 
 	cpufreq_register_notifier(&perf_cpufreq_nb, CPUFREQ_POLICY_NOTIFIER);
 	cpufreq_register_notifier(&perf_govinfo_nb, CPUFREQ_GOVINFO_NOTIFIER);
 
-	/* Cap max cpu freq individually for each cluster */
-	for_each_present_cpu(cpu) {
-		if (topology_physical_package_id(cpu) == 0)
-			per_cpu(cpu_stats, cpu).max = CLUSTER_0_FREQ_CAP;
-		else if (topology_physical_package_id(cpu) == 1)
-			per_cpu(cpu_stats, cpu).max = CLUSTER_1_FREQ_CAP;
-	}
+	for_each_present_cpu(cpu)
+		per_cpu(cpu_stats, cpu).max = UINT_MAX;
 
 	register_cpu_notifier(&msm_performance_cpu_notifier);
 
