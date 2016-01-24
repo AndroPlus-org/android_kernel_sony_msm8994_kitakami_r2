@@ -658,14 +658,14 @@ static int __init cpufreq_gov_dbs_init(void)
 
 static void __exit cpufreq_gov_dbs_exit(void)
 {
-	int cpu;
+//	int cpu;
 
 	cpufreq_unregister_governor(&cpufreq_gov_ondemand);
 
-	for_each_possible_cpu(cpu) {
-		kfree(per_cpu(cached_tuners, cpu));
-		per_cpu(cached_tuners, cpu) = NULL;
-	}
+//	for_each_possible_cpu(cpu) {
+//		kfree(per_cpu(cached_tuners, cpu));
+//		per_cpu(cached_tuners, cpu) = NULL;
+//	}
 }
 
 MODULE_AUTHOR("Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>");
