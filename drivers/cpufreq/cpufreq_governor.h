@@ -226,6 +226,7 @@ struct common_dbs_data {
 	int (*init)(struct dbs_data *dbs_data);
 	int (*init_ex)(struct dbs_data *dbs_data, struct cpufreq_policy *policy);
 	int (*init_cs)(struct dbs_data *dbs_data, struct cpufreq_policy *policy);
+	int (*init_od)(struct dbs_data *dbs_data, struct cpufreq_policy *policy);
 	void (*exit)(struct dbs_data *dbs_data);
 
 	/* Governor specific ops, see below */
