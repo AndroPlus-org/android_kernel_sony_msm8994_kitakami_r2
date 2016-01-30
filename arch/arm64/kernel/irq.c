@@ -25,6 +25,7 @@
 #include <linux/irq.h>
 #include <linux/smp.h>
 #include <linux/init.h>
+#include <linux/ratelimit.h>
 #include <linux/irqchip.h>
 #include <linux/seq_file.h>
 #include <linux/ratelimit.h>
@@ -124,7 +125,7 @@ void migrate_irqs(void)
 		raw_spin_unlock(&desc->lock);
 
 		if (affinity_broken)
-			pr_debug("IRQ%u no longer affine to CPU%u\n",
+			pr_warn_ratelimited("IRQ%u no longer affine to CPU%u\n",
 					    i, smp_processor_id());
 	}
 
