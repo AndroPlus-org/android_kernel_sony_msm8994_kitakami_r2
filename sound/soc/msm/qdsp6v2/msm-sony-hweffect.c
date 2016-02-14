@@ -335,41 +335,6 @@ int msm_sony_hweffect_sonybundle_handler(struct audio_client *ac,
 			}
 			break;
 
-		case XLOUD_ENABLE:
-			if (length != 1 || index_offset != 0) {
-				pr_err("XLOUD_ENABLE:invalid params\n");
-				rc = -EINVAL;
-				goto invalid_config;
-			}
-			sb->xloud.enable_flag = *values++;
-			pr_debug("%s:XLOUD_ENABLE state:%d\n", __func__,
-				sb->xloud.enable_flag);
-			if (command_config_state == CONFIG_SET) {
-				struct xloud_params *xl_params =
-				(struct xloud_params *)effect;
-
-				module_id = ASM_MODULE_ID_SONYBUNDLE;
-				param_id = PARAM_ID_SB_XLOUD_USER_PARAM;
-				xl_params->enable_flag = sb->xloud.enable_flag;
-				p_length += sizeof(struct xloud_params);
-
-				if (!sb->xloud_tuning_update) {
-					int ret;
-					ret = sony_hweffect_send_tuning_params(
-							XLOUD_PARAM,
-							(void *)ac);
-					pr_debug("%s:sony_hweffect_send_tuning_params(XLOUD) ret=%d\n",
-						__func__, ret);
-					if (ret < 0) {
-						pr_err("XLOUD_ENABLE: send tuning param error\n");
-						rc = -EINVAL;
-						goto invalid_config;
-					}
-					sb->xloud_tuning_update = true;
-				}
-			}
-			break;
-
 		default:
 			pr_err("%s: Invalid command to set config\n", __func__);
 			break;
