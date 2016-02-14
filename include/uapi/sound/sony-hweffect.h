@@ -70,8 +70,6 @@
 
 #define CLEARPHASE_SP_ENABLE        0x00011061
 
-#define XLOUD_ENABLE                0x00011071
-
 #define SONYBUNDLE_ENABLE_PARAM_LEN         1
 #define DYNAMIC_NORMALIZER_ENABLE_PARAM_LEN 1
 #define SFORCE_ENABLE_PARAM_LEN             1
@@ -81,7 +79,6 @@
 #define CLEARAUDIO_EQ_COEF_PARAM_LEN        6
 #define CLEARAUDIO_VOLUME_PARAM_LEN         1
 #define CLEARPHASE_SP_ENABLE_PARAM_LEN      1
-#define XLOUD_ENABLE_PARAM_LEN              1
 
 #define COMMAND_PAYLOAD_LEN 3
 #define COMMAND_PAYLOAD_SZ  (COMMAND_PAYLOAD_LEN * sizeof(uint32_t))
@@ -105,8 +102,6 @@
 			(CLEARAUDIO_VOLUME_PARAM_LEN*sizeof(int32_t))
 #define CLEARPHASE_SP_ENABLE_PARAM_SZ   \
 			(CLEARPHASE_SP_ENABLE_PARAM_LEN*sizeof(uint32_t))
-#define XLOUD_ENABLE_PARAM_SZ   \
-			(XLOUD_ENABLE_PARAM_LEN*sizeof(uint32_t))
 
 struct common_params {
 	uint16_t enable_flag;
@@ -148,11 +143,6 @@ struct clearphase_sp_params {
 	uint16_t reserved;
 };
 
-struct xloud_params {
-	uint16_t enable_flag;
-	uint16_t reserved;
-};
-
 struct sonybundle_params {
 	struct common_params common;
 	struct dynamic_normalizer_params dynamic_normalizer;
@@ -164,8 +154,6 @@ struct sonybundle_params {
 	struct clearaudio_volume ca_volume;
 	struct clearphase_sp_params clearphase_sp;
 	bool clearphase_sp_tuning_update;
-	struct xloud_params xloud;
-	bool xloud_tuning_update;
 };
 
 #endif /*_SONYEFFECT_HW_H */
