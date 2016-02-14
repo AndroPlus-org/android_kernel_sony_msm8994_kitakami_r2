@@ -7279,12 +7279,10 @@ struct afe_param_id_clip_bank_sel {
 #define PARAM_ID_SB_CLEARAUDIO_USER_PARAM   0x10002016
 #define PARAM_ID_SB_CLEARAUDIO_VOLUME_PARAM 0x10002017
 #define PARAM_ID_SB_CLEARPHASE_SP_USER_PARAM 0x10002018
-#define PARAM_ID_SB_XLOUD_USER_PARAM        0x10002019
 
 #define PARAM_ID_SB_CLEARPHASE_HP_TUNING    0x1000201A
 #define PARAM_ID_SB_SFORCE_TUNING           0x1000201B
 #define PARAM_ID_SB_CLEARPHASE_SP_TUNING    0x1000201C
-#define PARAM_ID_SB_XLOUD_TUNING            0x1000201D
 
 #define ASM_STREAM_POSTPROC_TOPO_ID_SONY    0x10002101
 
@@ -7298,11 +7296,6 @@ struct s_force_tuning_params {
 
 struct clearphase_sp_tuning_params {
 	unsigned char coefs[2360];
-} __packed;
-
-struct xloud_tuning_params {
-	unsigned int level;
-	unsigned char coefs[512];
 } __packed;
 /* SOMC effect end */
 

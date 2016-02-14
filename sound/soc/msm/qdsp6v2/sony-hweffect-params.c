@@ -28,8 +28,6 @@ static struct clearphase_hp_tuning_params clearphase_hp_coefs;
 
 static struct clearphase_sp_tuning_params clearphase_sp_coefs;
 
-static struct xloud_tuning_params xloud_coefs;
-
 void *sony_hweffect_params_getparam(unsigned int effect_id)
 {
 	void *hw_params;
@@ -49,10 +47,6 @@ void *sony_hweffect_params_getparam(unsigned int effect_id)
 
 	case CLEARPHASE_SP_PARAM:
 		hw_params = (void *)&clearphase_sp_coefs;
-		break;
-
-	case XLOUD_PARAM:
-		hw_params = (void *)&xloud_coefs;
 		break;
 
 	default:
@@ -98,14 +92,6 @@ static long sony_hweffect_params_ioctl_shared(struct file *f,
 		}
 		break;
 
-	case XLOUD_PARAM:
-		if (copy_from_user(&xloud_coefs, (void *)arg,
-			sizeof(struct xloud_param_data))) {
-			pr_err("%s: fail to copy memory handle!\n", __func__);
-			return -EFAULT;
-		}
-		break;
-
 	default:
 		return -EFAULT;
 	};
@@ -131,8 +117,6 @@ static long sony_hweffect_params_ioctl(struct file *f,
 			_IOW(SONYEFFECT_HW_PARAMS_IOCTL_MAGIC, 1, compat_uptr_t)
 #define CLEARPHASE_SP_PARAM_32 \
 			_IOW(SONYEFFECT_HW_PARAMS_IOCTL_MAGIC, 2, compat_uptr_t)
-#define XLOUD_PARAM_32 \
-			_IOW(SONYEFFECT_HW_PARAMS_IOCTL_MAGIC, 3, compat_uptr_t)
 
 static long sony_hweffect_params_compat_ioctl(struct file *f,
 		unsigned int cmd, unsigned long arg)
@@ -149,9 +133,6 @@ static long sony_hweffect_params_compat_ioctl(struct file *f,
 		break;
 	case CLEARPHASE_SP_PARAM_32:
 		cmd64 = CLEARPHASE_SP_PARAM;
-		break;
-	case XLOUD_PARAM_32:
-		cmd64 = XLOUD_PARAM;
 		break;
 	default:
 		result = -EINVAL;
