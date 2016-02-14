@@ -394,60 +394,8 @@ static const struct kernel_param_ops param_ops_cpu_min_freq = {
 };
 module_param_cb(cpu_min_freq, &param_ops_cpu_min_freq, NULL, 0644);
 
-/*
- * Userspace sends cpu#:max_freq_value to vote for max_freq_value as the new
- * scaling_max. To withdraw its vote it needs to enter cpu#:UINT_MAX
- */
-static int set_cpu_max_freq(const char *buf, const struct kernel_param *kp)
+static int set_cpu_max_freq_nop(const char *buf, const struct kernel_param *kp)
 {
-	int i, j, ntokens = 0;
-	unsigned int val, cpu;
-	const char *cp = buf;
-	struct cpu_status *i_cpu_stats;
-	struct cpufreq_policy policy;
-	cpumask_var_t limit_mask;
-	int ret;
-
-	while ((cp = strpbrk(cp + 1, " :")))
-		ntokens++;
-
-	/* CPU:value pair */
-	if (!(ntokens % 2))
-		return -EINVAL;
-
-	cp = buf;
-	cpumask_clear(limit_mask);
-	for (i = 0; i < ntokens; i += 2) {
-		if (sscanf(cp, "%u:%u", &cpu, &val) != 2)
-			return -EINVAL;
-		if (cpu > (num_present_cpus() - 1))
-			return -EINVAL;
-
-		i_cpu_stats = &per_cpu(cpu_stats, cpu);
-
-		i_cpu_stats->max = val;
-		cpumask_set_cpu(cpu, limit_mask);
-
-		cp = strchr(cp, ' ');
-		cp++;
-	}
-
-	get_online_cpus();
-	for_each_cpu(i, limit_mask) {
-		i_cpu_stats = &per_cpu(cpu_stats, i);
-		if (cpufreq_get_policy(&policy, i))
-			continue;
-
-		if (cpu_online(i) && (policy.max != i_cpu_stats->max)) {
-			ret = cpufreq_update_policy(i);
-			if (ret)
-				continue;
-		}
-		for_each_cpu(j, policy.related_cpus)
-			cpumask_clear_cpu(j, limit_mask);
-	}
-	put_online_cpus();
-
 	return 0;
 }
 
@@ -464,7 +412,7 @@ static int get_cpu_max_freq(char *buf, const struct kernel_param *kp)
 }
 
 static const struct kernel_param_ops param_ops_cpu_max_freq = {
-	.set = set_cpu_max_freq,
+	.set = set_cpu_max_freq_nop,
 	.get = get_cpu_max_freq,
 };
 module_param_cb(cpu_max_freq, &param_ops_cpu_max_freq, NULL, 0644);
