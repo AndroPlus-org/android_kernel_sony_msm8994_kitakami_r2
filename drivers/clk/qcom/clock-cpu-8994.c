@@ -2141,6 +2141,44 @@ static struct platform_driver cpu_clock_8994_driver = {
 	},
 };
 
+extern void dev_pm_opp_set_voltage(struct opp *opp, unsigned int voltage);
+
+void vc_set_vdd(const char *buf)
+{
+    struct opp *opppoop;
+    struct clk *c5;
+    int ret, i;
+    char size_cur[16];
+    unsigned int volt;
+    int levels = 0;
+
+    c5 = &a53_clk.c;
+    levels = c5->vdd_class->num_levels;
+
+    rcu_read_lock();
+	if (buf)
+	{
+	    for(i=1; i < levels; i++)
+	    {
+	    	opppoop =
+	    	    dev_pm_opp_find_freq_exact(get_cpu_device(0), c5->fmax[i], true);
+	    	ret = sscanf(buf, "%d", &volt);
+	    	pr_info("[Hundsbuah]: changed voltage for %d to %d\n",
+	    			(unsigned int)c5->fmax[i]/1000, volt*1000);
+
+	    	/* 0,7V min, 1,3V max voltage ! */
+	    	dev_pm_opp_set_voltage(opppoop, 
+                ((unsigned int)min(
+                    (unsigned int)(max((unsigned int)(volt*1000),
+                       (unsigned int)700000)), (unsigned int)1300000)));
+
+	    	ret = sscanf(buf, "%s", size_cur);
+	    	buf += (strlen(size_cur)+1);
+	    }
+	}
+	rcu_read_unlock();
+}
+
 ssize_t vc_get_vdd(char *buf)
 {
 	struct opp *opppoop;
@@ -2161,6 +2199,7 @@ ssize_t vc_get_vdd(char *buf)
                 }
         }
 
+        /*
         c5 = &a57_clk.c;
         levels = c5->vdd_class->num_levels;
 
@@ -2173,6 +2212,7 @@ ssize_t vc_get_vdd(char *buf)
                                 (int)dev_pm_opp_get_voltage(opppoop)/1000 );
                 }
         }
+        */
 	rcu_read_unlock();
 
         return len;
