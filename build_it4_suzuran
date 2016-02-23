@@ -1,11 +1,12 @@
 ### GCC 4.9.x
+### I'm using UBERTC https://bitbucket.org/UBERTC/aarch64-linux-android-4.9-kernel
 
 if [ ! -e ./arch/arm/boot/dts/msm8994-v1-kitakami_suzuran_generic.dtb ]; then
 rm ./arch/arm/boot/dts/*.dtb
 fi
 
 export ARCH=arm64
-export PATH=~/UBERTC-aarch64-linux-android-4.9-kernel-4e03aaa93230/bin/:$PATH
+export PATH=~/aarch64-linux-android-4.9-kernel/bin/:$PATH
 export CROSS_COMPILE=aarch64-linux-android-
 export KBUILD_DIFFCONFIG=suzuran_diffconfig
 make kitakami_defconfig
