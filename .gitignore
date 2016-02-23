@@ -160,3 +160,13 @@ scripts/kconfig/zconf.hash.c
 scripts/kconfig/zconf.tab.c
 scripts/kconfig/*.o
 scripts/kconfig/lxdialog/*.o
+scripts/bin2c
+scripts/dtc/dtc
+scripts/dtc/dtc-lexer.lex.c
+scripts/dtc/dtc-parser.tab.c
+scripts/dtc/dtc-parser.tab.h
+scripts/genksyms/keywords.hash.c
+scripts/genksyms/lex.lex.c
+scripts/genksyms/parse.tab.c
+scripts/kconfig/zconf.lex.c
+scripts/sortextable
