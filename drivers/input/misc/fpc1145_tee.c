@@ -98,18 +98,24 @@ static int vreg_setup(struct fpc1145_data *fpc1145, const char *name,
 	bool enable)
 {
 	size_t i;
-	int rc;
+	int rc = 0;
+	bool reg_found = false;
 	struct regulator *vreg;
 	struct device *dev = fpc1145->dev;
 
 	for (i = 0; i < ARRAY_SIZE(fpc1145->vreg); i++) {
 		const char *n = vreg_conf[i].name;
-		if (!strncmp(n, name, strlen(n)))
-			goto found;
+		if (!strncmp(n, name, strlen(n))) {
+			reg_found = true;
+			break;
+		}
 	}
-	dev_err(dev, "Regulator %s not found\n", name);
-	return -EINVAL;
-found:
+
+	if (!reg_found) {
+		dev_err(dev, "Regulator %s not found\n", name);
+		return -EINVAL;
+	}
+
 	vreg = fpc1145->vreg[i];
 	if (enable) {
 		if (!vreg) {
@@ -147,7 +153,6 @@ found:
 			regulator_put(vreg);
 			fpc1145->vreg[i] = NULL;
 		}
-		rc = 0;
 	}
 	return rc;
 }
@@ -220,6 +225,7 @@ static int set_pipe_ownership(struct fpc1145_data *fpc1145, bool to_tz)
 static int set_clks(struct fpc1145_data *fpc1145, bool enable)
 {
 	int rc = 0;
+
 	mutex_lock(&fpc1145->lock);
 
 	if (enable == fpc1145->clocks_enabled)
@@ -293,6 +299,7 @@ static int select_pin_ctl(struct fpc1145_data *fpc1145, const char *name)
 	size_t i;
 	int rc;
 	struct device *dev = fpc1145->dev;
+
 	for (i = 0; i < ARRAY_SIZE(fpc1145->pinctrl_state); i++) {
 		const char *n = pctl_names[i];
 		if (!strncmp(n, name, strlen(n))) {
@@ -302,13 +309,11 @@ static int select_pin_ctl(struct fpc1145_data *fpc1145, const char *name)
 				dev_err(dev, "cannot select '%s'\n", name);
 			else
 				dev_dbg(dev, "Selected '%s'\n", name);
-			goto exit;
+			return rc;
 		}
 	}
-	rc = -EINVAL;
 	dev_err(dev, "%s:'%s' not found\n", __func__, name);
-exit:
-	return rc;
+	return -EINVAL;
 }
 
 /**
@@ -335,7 +340,7 @@ static ssize_t spi_owner_set(struct device *dev,
 		return -EINVAL;
 
 	rc = set_pipe_ownership(fpc1145, to_tz);
-	return rc ? rc : count;
+	return rc < 0 ? rc : count;
 }
 static DEVICE_ATTR(spi_owner, S_IWUSR, NULL, spi_owner_set);
 
@@ -344,7 +349,7 @@ static ssize_t pinctl_set(struct device *dev,
 {
 	struct fpc1145_data *fpc1145 = dev_get_drvdata(dev);
 	int rc = select_pin_ctl(fpc1145, buf);
-	return rc ? rc : count;
+	return rc < 0 ? rc : count;
 }
 static DEVICE_ATTR(pinctl_set, S_IWUSR, NULL, pinctl_set);
 
@@ -383,7 +388,7 @@ static ssize_t regulator_enable_set(struct device *dev,
 	else
 		return -EINVAL;
 	rc = vreg_setup(fpc1145, name, enable);
-	return rc ? rc : count;
+	return rc != 0 ? rc : count;
 }
 static DEVICE_ATTR(regulator_enable, S_IWUSR, NULL, regulator_enable_set);
 
@@ -408,17 +413,17 @@ static int hw_reset(struct fpc1145_data *fpc1145)
 	struct device *dev = fpc1145->dev;
 
 	int rc = select_pin_ctl(fpc1145, "fpc1145_reset_active");
-	if (rc)
+	if (rc < 0)
 		goto exit;
 	usleep_range(FPC1145_RESET_HIGH1_US, FPC1145_RESET_HIGH1_US + 100);
 
 	rc = select_pin_ctl(fpc1145, "fpc1145_reset_reset");
-	if (rc)
+	if (rc < 0)
 		goto exit;
 	usleep_range(FPC1145_RESET_LOW_US, FPC1145_RESET_LOW_US + 100);
 
 	rc = select_pin_ctl(fpc1145, "fpc1145_reset_active");
-	if (rc)
+	if (rc < 0)
 		goto exit;
 	usleep_range(FPC1145_RESET_HIGH1_US, FPC1145_RESET_HIGH1_US + 100);
 
@@ -438,7 +443,7 @@ static ssize_t hw_reset_set(struct device *dev,
 		rc = hw_reset(fpc1145);
 	else
 		return -EINVAL;
-	return rc ? rc : count;
+	return rc < 0 ? rc : count;
 }
 static DEVICE_ATTR(hw_reset, S_IWUSR, NULL, hw_reset_set);
 
@@ -456,24 +461,24 @@ static DEVICE_ATTR(hw_reset, S_IWUSR, NULL, hw_reset_set);
  */
 static int device_prepare(struct fpc1145_data *fpc1145, bool enable)
 {
-	int rc;
+	int rc = 0;
 
 	mutex_lock(&fpc1145->lock);
 	if (enable && !fpc1145->prepared) {
 		spi_bus_lock(fpc1145->spi->master);
 		fpc1145->prepared = true;
-		select_pin_ctl(fpc1145, "fpc1145_reset_reset");
+		(void)select_pin_ctl(fpc1145, "fpc1145_reset_reset");
 
 		rc = vreg_setup(fpc1145, "vcc_spi", true);
-		if (rc)
+		if (rc != 0)
 			goto exit;
 
 		rc = vreg_setup(fpc1145, "vdd_io", true);
-		if (rc)
+		if (rc != 0)
 			goto exit_1;
 
 		rc = vreg_setup(fpc1145, "vdd_ana", true);
-		if (rc)
+		if (rc != 0)
 			goto exit_2;
 
 		usleep_range(PWR_ON_STEP_SLEEP,
@@ -493,7 +498,6 @@ static int device_prepare(struct fpc1145_data *fpc1145, bool enable)
 		if (rc)
 			goto exit_4;
 	} else if (!enable && fpc1145->prepared) {
-		rc = 0;
 		(void)set_pipe_ownership(fpc1145, false);
 exit_4:
 		(void)spi_set_fabric(fpc1145, false);
@@ -513,8 +517,6 @@ exit:
 
 		fpc1145->prepared = false;
 		spi_bus_unlock(fpc1145->spi->master);
-	} else {
-		rc = 0;
 	}
 	mutex_unlock(&fpc1145->lock);
 	return rc;
@@ -655,19 +657,19 @@ static int fpc1145_probe(struct spi_device *spi)
 
 	rc = fpc1145_request_named_gpio(fpc1145, "fpc,gpio_irq",
 			&fpc1145->irq_gpio);
-	if (rc)
+	if (rc != 0)
 		goto exit;
 	rc = fpc1145_request_named_gpio(fpc1145, "fpc,gpio_cs0",
 			&fpc1145->cs0_gpio);
-	if (rc)
+	if (rc != 0)
 		goto exit;
 	rc = fpc1145_request_named_gpio(fpc1145, "fpc,gpio_cs1",
 			&fpc1145->cs1_gpio);
-	if (rc)
+	if (rc != 0)
 		goto exit;
 	rc = fpc1145_request_named_gpio(fpc1145, "fpc,gpio_rst",
 			&fpc1145->rst_gpio);
-	if (rc)
+	if (rc != 0)
 		goto exit;
 
 	fpc1145->iface_clk = clk_get(dev, "iface_clk");
@@ -719,16 +721,16 @@ static int fpc1145_probe(struct spi_device *spi)
 	}
 
 	rc = select_pin_ctl(fpc1145, "fpc1145_reset_reset");
-	if (rc)
+	if (rc < 0)
 		goto exit;
 	rc = select_pin_ctl(fpc1145, "fpc1145_cs_low");
-	if (rc)
+	if (rc < 0)
 		goto exit;
 	rc = select_pin_ctl(fpc1145, "fpc1145_irq_active");
-	if (rc)
+	if (rc < 0)
 		goto exit;
 	rc = select_pin_ctl(fpc1145, "fpc1145_spi_active");
-	if (rc)
+	if (rc < 0)
 		goto exit;
 
 	fpc1145->clocks_enabled = false;
