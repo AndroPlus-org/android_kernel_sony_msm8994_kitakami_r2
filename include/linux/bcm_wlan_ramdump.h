@@ -24,6 +24,4 @@
 extern void bcm_wlan_crash_reason(char *msg);
 extern void bcm_wlan_ramdump(void *addr, int size);
 
-#define BCM_WLAN_CRASH_REASON_LEN 512
-
 #endif
