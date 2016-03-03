@@ -646,7 +646,6 @@ config QCOM_LIQUID_DOCK
 config RAMDUMP_TAGS
 	bool "Ramdump tags to communicate between kernel and ramdump"
 	default n
-	depends on !RAMDUMP_CRASH_LOGS
 	help
 	  This option enables a driver which can be interacted with to
 	  supply the ramdumper with more information about the current
@@ -684,13 +683,6 @@ config BCM_WLAN_RAMDUMP
 	bool "Subsystem ramdump for broadcomm wlan device"
 	default n
 	depends on DEBUG_FS && MSM_SUBSYSTEM_RESTART
-	help
-	  This module create a bcm_wlan ramdump device via
-	  qcom subsystem ramdump and also creates the debugfs entry
-	  to collect the wlan subsystem crash information.
-	  This module causes panic if the ssr feature is not enabled.
-	  The userspace will collect the ramdump info via registred
-	  file operations.
 
 config BD7602_POWER_IC
 	bool "BD7602 Power IC control"
