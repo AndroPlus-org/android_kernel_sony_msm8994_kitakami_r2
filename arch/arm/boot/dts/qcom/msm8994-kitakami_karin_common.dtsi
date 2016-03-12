@@ -79,8 +79,8 @@
 			mode = <0>;
 			maxim_sti,irq-gpio = <&msm_gpio 42 0x00>;
 			maxim_sti,reset-gpio = <&msm_gpio 109 0x00>;
-			maxim_sti,touch_fusion = "/system/vendor/bin/touch_fusion";
-			maxim_sti,config_file = "/system/vendor/etc/touch_fusion_panel_id_0x%04X.cfg";
+			maxim_sti,touch_fusion = "/vendor/bin/touch_fusion";
+			maxim_sti,config_file = "/vendor/etc/touch_fusion_panel_id_0x%04X.cfg";
 			maxim_sti,fw_name = "maxim_fp35.bin";
 			maxim_sti,nl_family = "touch_fusion";
 			maxim_sti,nl_mc_groups = <5>;
