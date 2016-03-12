@@ -1,8 +1,8 @@
 ### GCC 4.9.x
 ### I'm using UBERTC https://bitbucket.org/UBERTC/aarch64-linux-android-4.9-kernel
 
-if [ ! -e ./arch/arm/boot/dts/msm8994-v1-kitakami_sumire_generic.dtb ]; then
-rm ./arch/arm/boot/dts/*.dtb
+if [ ! -e ./arch/arm64/boot/dts/qcom/msm8994-v1-kitakami_sumire_generic.dtb ]; then
+rm ./arch/arm64/boot/dts/qcom/*.dtb
 fi
 
 export ARCH=arm64
