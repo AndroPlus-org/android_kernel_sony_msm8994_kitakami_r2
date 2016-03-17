@@ -15,11 +15,11 @@
 #include "cpufreq_governor.h"
 
 /* elementalx governor macros */
-#define DEF_FREQUENCY_UP_THRESHOLD		(90)
-#define DEF_FREQUENCY_DOWN_DIFFERENTIAL		(20)
+#define DEF_FREQUENCY_UP_THRESHOLD		(93)
+#define DEF_FREQUENCY_DOWN_DIFFERENTIAL		(5)
 #define DEF_ACTIVE_FLOOR_FREQ			(960000)
-#define MIN_SAMPLING_RATE			(10000)
-#define DEF_SAMPLING_DOWN_FACTOR		(4)
+#define MIN_SAMPLING_RATE			(120000)
+#define DEF_SAMPLING_DOWN_FACTOR		(2)
 #define MAX_SAMPLING_DOWN_FACTOR		(20)
 #define FREQ_NEED_BURST(x)			(x < 800000 ? 1 : 0)
 #define MAX(x,y)				(x > y ? x : y)
