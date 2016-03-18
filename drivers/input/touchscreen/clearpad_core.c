@@ -494,6 +494,7 @@ struct clearpad_cover_t {
 struct clearpad_wakeup_gesture_t {
 	bool supported;
 	bool enabled;
+	bool engaged;
 	bool lpm_disabled;
 	bool large_panel;
 	unsigned long time_started;
@@ -2321,7 +2322,7 @@ static int clearpad_set_suspend_mode(struct clearpad_t *this)
 
 	dev_dbg(&this->pdev->dev, "%s\n", __func__);
 
-	if (this->wakeup_gesture.enabled) {
+	if (this->wakeup_gesture.engaged) {
 		if (clearpad_is_valid_function(this, SYN_F11_2D)) {
 			rc = clearpad_put_bit(SYNF(this, F11_2D, CTRL, 0x00),
 				XY_REPORTING_MODE_WAKEUP_GESTURE_MODE,
@@ -2345,7 +2346,6 @@ static int clearpad_set_suspend_mode(struct clearpad_t *this)
 				"failed to enter wake-up gesture mode\n");
 			goto exit;
 		}
-
 		this->wakeup_gesture.time_started = jiffies - 1;
 		clearpad_set_delay(10);
 		LOG_CHECK(this, "enter doze mode\n");
@@ -2354,6 +2354,7 @@ static int clearpad_set_suspend_mode(struct clearpad_t *this)
 			if (rc)
 				goto exit;
 		}
+		this->wakeup_gesture.enabled = true;
 		this->wakeup_gesture.suspend_with_enabled = true;
 	} else {
 		rc = clearpad_put_bit(SYNF(this, F01_RMI, CTRL, 0x00),
@@ -2370,6 +2371,7 @@ static int clearpad_set_suspend_mode(struct clearpad_t *this)
 		rc = clearpad_vreg_suspend(this, 1);
 		if (rc)
 			goto exit;
+		this->wakeup_gesture.enabled = false;
 		this->wakeup_gesture.suspend_with_enabled = false;
 	}
 
@@ -3800,13 +3802,13 @@ static ssize_t clearpad_wakeup_gesture_store(struct device *dev,
 		goto exit;
 	}
 
-	this->wakeup_gesture.enabled = sysfs_streq(buf, "0") ? false : true;
+	this->wakeup_gesture.engaged = sysfs_streq(buf, "0") ? false : true;
 
 	device_init_wakeup(&this->pdev->dev,
-			this->wakeup_gesture.enabled ? 1 : 0);
+			this->wakeup_gesture.engaged ? 1 : 0);
 
 	dev_info(&this->pdev->dev, "wakeup gesture: %s",
-			this->wakeup_gesture.enabled ? "ENABLE" : "DISABLE");
+			this->wakeup_gesture.engaged ? "ENABLE" : "DISABLE");
 exit:
 	UNLOCK(this);
 
