@@ -154,8 +154,6 @@ void dev_pm_opp_set_voltage(struct opp *opp, unsigned int voltage)
 {
 	struct opp *tmp_opp;
 
-	mutex_lock(&dev_opp_list_lock);
-
 	tmp_opp = rcu_dereference(opp);
 	if (unlikely(IS_ERR_OR_NULL(tmp_opp)) || !tmp_opp->available)
 	{
@@ -173,11 +171,6 @@ void dev_pm_opp_set_voltage(struct opp *opp, unsigned int voltage)
 			pr_err("[Hundsbuah] %d: Invalid voltage!\n", voltage);
 		}
 	}
-
-	mutex_unlock(&dev_opp_list_lock);
-
-    /* Notify the change of the OPP availability */
-	srcu_notifier_call_chain(&tmp_opp->dev_opp->head, OPP_EVENT_ENABLE, tmp_opp);
 }
 EXPORT_SYMBOL_GPL(dev_pm_opp_set_voltage);
 
