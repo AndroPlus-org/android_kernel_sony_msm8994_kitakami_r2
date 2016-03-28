@@ -22,7 +22,7 @@
 #include "u_rmnet.h"
 #include "gadget_chips.h"
 
-static unsigned int rmnet_dl_max_pkt_per_xfer = 7;
+static unsigned int rmnet_dl_max_pkt_per_xfer = 10;
 module_param(rmnet_dl_max_pkt_per_xfer, uint, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(rmnet_dl_max_pkt_per_xfer,
 	"Maximum packets per transfer for DL aggregation");
