@@ -173,6 +173,7 @@ CONFIG_CORESIGHT=n
 # CONFIG_MSM_IOMMU_VBIF_CHECK is not set
 # CONFIG_MSM_TZ_LOG is not set
 # CONFIG_QCOM_NPA_DUMP is not set
+# CONFIG_ALLOC_BUFFERS_IN_4K_CHUNKS is not set
 
 # Build module inline
 CONFIG_WIL6210=y
