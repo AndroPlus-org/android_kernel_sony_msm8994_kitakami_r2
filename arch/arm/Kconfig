@@ -2396,3 +2396,5 @@ source "crypto/Kconfig"
 source "lib/Kconfig"
 
 source "arch/arm/kvm/Kconfig"
+
+source "arch/arm64/hotplug/Kconfig"
