@@ -826,8 +826,17 @@ static void update_temperature(struct thermal_zone_device *tz)
 
 	ret = thermal_zone_get_temp(tz, &temp);
 	if (ret) {
-		dev_warn(&tz->device, "failed to read out thermal zone %d\n",
-			 tz->id);
+		if (ret == -ENODEV)
+			dev_warn(&tz->device,
+				"no such thermal device (%d)\n", tz->id);
+		else if (ret == -EPROBE_DEFER)
+			dev_info(&tz->device,
+				"probe deferral for thermal zone %d\n",
+								tz->id);
+		else
+			dev_warn(&tz->device,
+				"failed to read out thermal zone %d\n",
+								tz->id);
 		return;
 	}
 
