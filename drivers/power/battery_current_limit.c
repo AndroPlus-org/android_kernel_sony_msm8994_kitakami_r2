@@ -226,8 +226,8 @@ static void __ref bcl_handle_hotplug(struct work_struct *work)
 	int ret = 0, _cpu = 0;
 
 	mutex_lock(&bcl_hotplug_mutex);
-
-	bcl_update_online_mask();
+	if (cpumask_empty(bcl_cpu_online_mask))
+		bcl_update_online_mask();
 
 #ifdef CONFIG_MSM_BCL_SOMC_CTL
 	if ((bcl_soc_state == BCL_LOW_THRESHOLD
@@ -287,16 +287,14 @@ static int __ref bcl_cpu_ctrl_callback(struct notifier_block *nfb,
 	uint32_t cpu = (uintptr_t)hcpu;
 
 	if (action == CPU_UP_PREPARE || action == CPU_UP_PREPARE_FROZEN) {
-		if (unlikely(cpumask_empty(bcl_cpu_online_mask)))
-			bcl_update_online_mask();
 		if (!cpumask_test_and_set_cpu(cpu, bcl_cpu_online_mask))
 			pr_debug("BCL online Mask: %u\n",
 				cpumask_weight(bcl_cpu_online_mask));
 		if (bcl_hotplug_request & BIT(cpu)) {
-			pr_info("preventing CPU%u from coming online\n", cpu);
+			pr_info("preventing CPU%d from coming online\n", cpu);
 			return NOTIFY_BAD;
 		} else {
-			pr_debug("voting for CPU%u to be online\n", cpu);
+			pr_debug("voting for CPU%d to be online\n", cpu);
 		}
 	}
 
@@ -949,6 +947,7 @@ mode_store(struct device *dev, struct device_attribute *attr,
 		return -EPERM;
 
 	if (!strcmp(buf, "enable")) {
+		bcl_update_online_mask();
 		bcl_mode_set(BCL_DEVICE_ENABLED);
 		pr_info("bcl enabled\n");
 	} else if (!strcmp(buf, "disable")) {
