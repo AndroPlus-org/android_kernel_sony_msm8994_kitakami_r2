@@ -342,6 +342,12 @@ static const struct kernel_param_ops param_ops_low_power_mode = {
 
 module_param_cb(low_power_mode, &param_ops_low_power_mode, &low_power_mode, 0664);
 
+bool cluster_plug_is_low_power_mode(void)
+{
+	return active && low_power_mode;
+}
+EXPORT_SYMBOL(cluster_plug_is_low_power_mode);
+
 int __init cluster_plug_init(void)
 {
 	pr_info("cluster_plug: version %d.%d by sultanqasim and crpalmer\n",
