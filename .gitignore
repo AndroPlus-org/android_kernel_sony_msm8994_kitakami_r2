@@ -109,6 +109,8 @@ arch/arm/boot/compressed/vmlinux
 arch/arm/boot/zImage
 
 Image
+arch/arm/boot/dts/qcom/*.dtb
+arch/arm64/boot/Image.gz-dtb
 
 arch/arm/boot/Image
 arch/arm/boot/compressed/ashldi3.S
