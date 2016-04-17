@@ -34,7 +34,6 @@
 #define N_BIG_CPUS			4
 #define N_LITTLE_CPUS			4
 
-static DEFINE_MUTEX(cluster_plug_work_mutex);
 static DEFINE_MUTEX(cluster_plug_parameters_mutex);
 static struct delayed_work cluster_plug_work;
 static struct workqueue_struct *clusterplug_wq;
@@ -57,6 +56,7 @@ module_param(vote_threshold_up, uint, 0664);
 static ktime_t last_action;
 
 static bool active = false;
+static bool big_cluster_enabled = true;
 static bool little_cluster_enabled = true;
 static bool low_power_mode = false;
 
@@ -141,6 +141,9 @@ static void __ref enable_big_cluster(void)
 	unsigned int cpu;
 	unsigned int num_up = 0;
 
+	if (big_cluster_enabled)
+		return;
+
 	for_each_present_cpu(cpu) {
 		if (is_big_cpu(cpu) && !cpu_online(cpu)) {
 			cpu_up(cpu);
@@ -149,12 +152,17 @@ static void __ref enable_big_cluster(void)
 	}
 
 	pr_info("cluster_plug: %d big cpus enabled\n", num_up);
+
+	big_cluster_enabled = true;
 }
 
 static void disable_big_cluster(void)
 {
 	unsigned int cpu;
 	unsigned int num_down = 0;
+
+	if (!big_cluster_enabled)
+		return;
 
 	for_each_present_cpu(cpu) {
 		if (is_big_cpu(cpu) && cpu_online(cpu)) {
@@ -164,12 +172,17 @@ static void disable_big_cluster(void)
 	}
 
 	pr_info("cluster_plug: %d big cpus disabled\n", num_down);
+
+	big_cluster_enabled = false;
 }
 
 static void __ref enable_little_cluster(void)
 {
 	unsigned int cpu;
 	unsigned int num_up = 0;
+
+	if (little_cluster_enabled)
+		return;
 
 	for_each_present_cpu(cpu) {
 		if (is_little_cpu(cpu) && !cpu_online(cpu)) {
@@ -179,12 +192,17 @@ static void __ref enable_little_cluster(void)
 	}
 
 	pr_info("cluster_plug: %d little cpus enabled\n", num_up);
+
+	little_cluster_enabled = true;
 }
 
 static void disable_little_cluster(void)
 {
 	unsigned int cpu;
 	unsigned int num_down = 0;
+
+	if (!little_cluster_enabled)
+		return;
 
 	for_each_present_cpu(cpu) {
 		if (is_little_cpu(cpu) && cpu_online(cpu)) {
@@ -194,28 +212,13 @@ static void disable_little_cluster(void)
 	}
 
 	pr_info("cluster_plug: %d little cpus disabled\n", num_down);
+
+	little_cluster_enabled = false;
 }
 
-static void reset_cluster_state(void)
+static void queue_clusterplug_work(unsigned ms)
 {
-	mutex_lock(&cluster_plug_work_mutex);
-	if (!active) {
-		enable_big_cluster();
-		enable_little_cluster();
-	} else if (low_power_mode) {
-		enable_little_cluster();
-		disable_big_cluster();
-	} else {
-		enable_big_cluster();
-		disable_little_cluster();
-	}
-	mutex_unlock(&cluster_plug_work_mutex);
-}
-
-static void queue_cluster_plug_work_if_needed(void)
-{
-	if (active && !low_power_mode)
-		queue_delayed_work(clusterplug_wq, &cluster_plug_work, msecs_to_jiffies(sampling_time));
+	queue_delayed_work(clusterplug_wq, &cluster_plug_work, msecs_to_jiffies(ms));
 }
 
 static void cluster_plug_perform(void)
@@ -244,17 +247,11 @@ static void cluster_plug_perform(void)
 	}
 
 	if (vote_up > vote_threshold_up) {
-		if (!little_cluster_enabled) {
-			enable_little_cluster();
-			little_cluster_enabled = true;
-		}
+		enable_little_cluster();
 		vote_up = vote_threshold_up;
 		vote_down = 0;
 	} else if (!vote_up && vote_down > vote_threshold_down) {
-		if (little_cluster_enabled) {
-			disable_little_cluster();
-			little_cluster_enabled = false;
-		}
+		disable_little_cluster();
 		vote_down = vote_threshold_down;
 	}
 
@@ -263,11 +260,23 @@ static void cluster_plug_perform(void)
 
 static void __ref cluster_plug_work_fn(struct work_struct *work)
 {
-	mutex_lock(&cluster_plug_work_mutex);
-	cluster_plug_perform();
-	mutex_unlock(&cluster_plug_work_mutex);
+	if (active) {
+		if (low_power_mode) {
+			enable_little_cluster();
+			disable_big_cluster();
+			/* Do not schedule more work */
+			return;
+		}
 
-	queue_cluster_plug_work_if_needed();
+		if (!low_power_mode && !big_cluster_enabled)
+			enable_big_cluster();
+
+		cluster_plug_perform();
+		queue_clusterplug_work(sampling_time);
+	} else {
+		enable_big_cluster();
+		enable_little_cluster();
+	}
 }
 
 static int __ref active_show(char *buf,
@@ -289,11 +298,9 @@ static int __ref active_store(const char *buf,
 		flush_workqueue(clusterplug_wq);
 
 		active = (value != 0);
-		reset_cluster_state();
+		queue_clusterplug_work(1);
 
 		mutex_unlock(&cluster_plug_parameters_mutex);
-
-		queue_cluster_plug_work_if_needed();
 	}
 
 	return ret;
@@ -325,11 +332,9 @@ static int __ref low_power_mode_store(const char *buf,
 		flush_workqueue(clusterplug_wq);
 
 		low_power_mode = (value != 0);
-		reset_cluster_state();
+		queue_clusterplug_work(1);
 
 		mutex_unlock(&cluster_plug_parameters_mutex);
-
-		queue_cluster_plug_work_if_needed();
 	}
 
 	return ret;
