@@ -128,6 +128,7 @@ static void *get_cpu_dbs_info_s(int cpu)				\
  * cs_*: Conservative governor
  * ex_*: ElementalX governor
  * zz_*: ZZMoove governor
+ * ac_*: Alucard governor
  */
 
 /* Per cpu structures */
@@ -177,6 +178,15 @@ struct zz_cpu_dbs_info_s {
 	unsigned int enable:1;
 };
 
+struct ac_cpu_dbs_info_s {
+	struct cpu_dbs_common_info cdbs;
+	struct cpufreq_frequency_table *freq_table;
+	unsigned int up_rate:1;
+	unsigned int down_rate:1;
+	unsigned int min_index;
+	unsigned int max_index;
+};
+
 /* Per policy Governors sysfs tunables */
 struct od_dbs_tuners {
 	unsigned int ignore_nice_load;
@@ -222,6 +232,18 @@ struct zz_dbs_tuners {
 	unsigned int afs_threshold4;
 };
 
+struct ac_dbs_tuners {
+	unsigned int ignore_nice_load;
+	unsigned int sampling_rate;
+	int inc_cpu_load_at_min_freq;
+	int inc_cpu_load;
+	int dec_cpu_load_at_min_freq;
+	int dec_cpu_load;
+	int freq_responsiveness;
+	unsigned int cpus_up_rate;
+	unsigned int cpus_down_rate;
+};
+
 /* Common Governor data across policies */
 struct dbs_data;
 struct common_dbs_data {
@@ -230,6 +252,7 @@ struct common_dbs_data {
 	#define GOV_CONSERVATIVE	1
 	#define GOV_ELEMENTALX		2
 	#define GOV_ZZMOOVE		3
+	#define GOV_ALUCARD		4
 	int governor;
 	struct attribute_group *attr_group_gov_sys; /* one governor - system */
 	struct attribute_group *attr_group_gov_pol; /* one governor - policy */
@@ -290,6 +313,12 @@ struct cs_ops {
 
 struct zz_ops {
 	struct notifier_block *notifier_block;
+};
+
+struct ac_ops {
+	void (*get_cpu_frequency_table)(int cpu);
+	void (*get_cpu_frequency_table_minmax)(struct cpufreq_policy *policy, 
+			int cpu);
 };
 
 static inline int delay_for_sampling_rate(unsigned int sampling_rate)
