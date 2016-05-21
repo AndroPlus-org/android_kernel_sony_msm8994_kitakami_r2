@@ -35,14 +35,9 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 	struct cpu_dbs_common_info *cdbs = dbs_data->cdata->get_cpu_cdbs(cpu);
 	struct od_dbs_tuners *od_tuners = dbs_data->tuners;
 	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
-<<<<<<< HEAD
 	struct ex_dbs_tuners *ex_tuners = dbs_data->tuners;
 	struct zz_dbs_tuners *zz_tuners = dbs_data->tuners;
-=======
 	struct ac_dbs_tuners *ac_tuners = dbs_data->tuners;
-	struct dk_dbs_tuners *dk_tuners = dbs_data->tuners;
-	struct nm_dbs_tuners *nm_tuners = dbs_data->tuners;
->>>>>>> 8b309cb... Imported Alucard, Darkness and Nightmare CPU Governors!
 	struct cpufreq_policy *policy;
 	unsigned int sampling_rate;
 	unsigned int max_load = 0;
@@ -52,24 +47,15 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 
 	if (dbs_data->cdata->governor == GOV_ONDEMAND) {
 		ignore_nice = od_tuners->ignore_nice_load;
-<<<<<<< HEAD
 	} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
 		sampling_rate = ex_tuners->sampling_rate;
 		ignore_nice = ex_tuners->ignore_nice_load;
 	} else if (dbs_data->cdata->governor == GOV_ZZMOOVE) {
 		sampling_rate = zz_tuners->sampling_rate;
 		ignore_nice = zz_tuners->ignore_nice_load;
-=======
 	} else if (dbs_data->cdata->governor == GOV_ALUCARD) {
 		sampling_rate = ac_tuners->sampling_rate;
 		ignore_nice = ac_tuners->ignore_nice_load;
-	} else if (dbs_data->cdata->governor == GOV_DARKNESS) {
-		sampling_rate = dk_tuners->sampling_rate;
-		ignore_nice = dk_tuners->ignore_nice_load;
-	} else if (dbs_data->cdata->governor == GOV_NIGHTMARE) {
-		sampling_rate = nm_tuners->sampling_rate;
-		ignore_nice = nm_tuners->ignore_nice_load;
->>>>>>> 8b309cb... Imported Alucard, Darkness and Nightmare CPU Governors!
 	} else {
 		sampling_rate = cs_tuners->sampling_rate;
 		ignore_nice = cs_tuners->ignore_nice_load;
@@ -216,7 +202,6 @@ static void set_sampling_rate(struct dbs_data *dbs_data,
 {
 	if (dbs_data->cdata->governor == GOV_CONSERVATIVE) {
 		struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
-<<<<<<< HEAD
 		cs_tuners->sampling_rate = sampling_rate;
 	} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
 		struct ex_dbs_tuners *ex_tuners = dbs_data->tuners;
@@ -224,22 +209,10 @@ static void set_sampling_rate(struct dbs_data *dbs_data,
 	} else if (dbs_data->cdata->governor == GOV_ZZMOOVE) {
 		struct zz_dbs_tuners *zz_tuners = dbs_data->tuners;
 		zz_tuners->sampling_rate = sampling_rate;
-=======
-		cs_tuners->sampling_rate = max(cs_tuners->sampling_rate,
-			sampling_rate);
 	} else if (dbs_data->cdata->governor == GOV_ALUCARD) {
 		struct ac_dbs_tuners *ac_tuners = dbs_data->tuners;
 		ac_tuners->sampling_rate = max(ac_tuners->sampling_rate, 
 			sampling_rate);
-	} else if (dbs_data->cdata->governor == GOV_DARKNESS) {
-		struct dk_dbs_tuners *dk_tuners = dbs_data->tuners;
-		dk_tuners->sampling_rate = max(dk_tuners->sampling_rate, 
-			sampling_rate);
-	} else if (dbs_data->cdata->governor == GOV_NIGHTMARE) {
-		struct nm_dbs_tuners *nm_tuners = dbs_data->tuners;
-		nm_tuners->sampling_rate = max(nm_tuners->sampling_rate, 
-			sampling_rate);
->>>>>>> 8b309cb... Imported Alucard, Darkness and Nightmare CPU Governors!
 	} else {
 		struct od_dbs_tuners *od_tuners = dbs_data->tuners;
 		od_tuners->sampling_rate = max(od_tuners->sampling_rate, 
@@ -253,28 +226,16 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 	struct dbs_data *dbs_data;
 	struct od_cpu_dbs_info_s *od_dbs_info = NULL;
 	struct cs_cpu_dbs_info_s *cs_dbs_info = NULL;
-<<<<<<< HEAD
 	struct ex_cpu_dbs_info_s *ex_dbs_info = NULL;
 	struct zz_cpu_dbs_info_s *zz_dbs_info = NULL;
-=======
 	struct ac_cpu_dbs_info_s *ac_dbs_info = NULL;
-	struct dk_cpu_dbs_info_s *dk_dbs_info = NULL;
-	struct nm_cpu_dbs_info_s *nm_dbs_info = NULL;
->>>>>>> 8b309cb... Imported Alucard, Darkness and Nightmare CPU Governors!
 	struct od_ops *od_ops = NULL;
 	struct ac_ops *ac_ops = NULL;
-	struct dk_ops *dk_ops = NULL;
-	struct nm_ops *nm_ops = NULL;
 	struct od_dbs_tuners *od_tuners = NULL;
 	struct cs_dbs_tuners *cs_tuners = NULL;
-<<<<<<< HEAD
 	struct ex_dbs_tuners *ex_tuners = NULL;
 	struct zz_dbs_tuners *zz_tuners = NULL;
-=======
 	struct ac_dbs_tuners *ac_tuners = NULL;
-	struct dk_dbs_tuners *dk_tuners = NULL;
-	struct nm_dbs_tuners *nm_tuners = NULL;
->>>>>>> 8b309cb... Imported Alucard, Darkness and Nightmare CPU Governors!
 	struct cpu_dbs_common_info *cpu_cdbs;
 	unsigned int sampling_rate, latency, ignore_nice, j, cpu = policy->cpu;
 	int io_busy = 0;
@@ -457,7 +418,6 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 			cs_dbs_info->down_skip = 0;
 			cs_dbs_info->enable = 1;
 			cs_dbs_info->requested_freq = policy->cur;
-<<<<<<< HEAD
 		} else if (dbs_data->cdata->governor == GOV_ELEMENTALX) {
 			ex_dbs_info->down_floor = 0;
 			ex_dbs_info->enable = 1;
@@ -465,17 +425,11 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 			zz_dbs_info->down_skip = 0;
 			zz_dbs_info->enable = 1;
 			zz_dbs_info->requested_freq = policy->cur;
-=======
 		} else if (dbs_data->cdata->governor == GOV_ALUCARD) {
 			ac_ops->get_cpu_frequency_table(cpu);
 			ac_ops->get_cpu_frequency_table_minmax(policy, cpu);
 			ac_dbs_info->up_rate = 1;
 			ac_dbs_info->down_rate = 1;
-		} else if (dbs_data->cdata->governor == GOV_DARKNESS) {
-			dk_ops->get_cpu_frequency_table(cpu);
-		} else if (dbs_data->cdata->governor == GOV_NIGHTMARE) {
-			nm_ops->get_cpu_frequency_table(cpu);
->>>>>>> 8b309cb... Imported Alucard, Darkness and Nightmare CPU Governors!
 		} else {
 			od_dbs_info->rate_mult = 1;
 			od_dbs_info->sample_type = OD_NORMAL_SAMPLE;
