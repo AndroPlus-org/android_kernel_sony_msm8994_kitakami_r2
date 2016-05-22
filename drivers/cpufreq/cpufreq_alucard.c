@@ -23,7 +23,7 @@
 #include "cpufreq_governor.h"
 
 /* alucard governor macros */
-#define FREQ_RESPONSIVENESS			1113600
+#define FREQ_RESPONSIVENESS			1248000
 
 #define CPUS_DOWN_RATE				1
 #define CPUS_UP_RATE				1
