@@ -155,7 +155,7 @@ CONFIG_TOUCHSCREEN_CLEARPAD_RMI_DEV=y
 #### AndroPlus Kernel ####
 ##########################
 
-CONFIG_LOCALVERSION="-v42"
+CONFIG_LOCALVERSION="-v43"
 CONFIG_LOCALVERSION_AUTO=n
 
 # Disable unwanted things
